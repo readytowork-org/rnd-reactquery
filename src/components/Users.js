@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useQuery, QueryClient, QueryClientProvider } from "react-query";
 import { Pagination, Input } from "antd";
 import User from "./User";
+import axios from "axios";
 const queryClient = new QueryClient();
 
 const fetchUsers = async ({ queryKey }) => {
@@ -15,10 +16,14 @@ const fetchUsers = async ({ queryKey }) => {
 const Users = () => {
   const [page, setPage] = useState(1);
   const [keyword, setKeyword] = useState("");
-  const { data, status } = useQuery(["users", page, keyword], fetchUsers, {
-    keepPreviousData: true,
-    refetchOnWindowFocus: false,
-  });
+  const { data, status, refetch } = useQuery(
+    ["users", page, keyword],
+    fetchUsers,
+    {
+      keepPreviousData: true,
+      refetchOnWindowFocus: false,
+    }
+  );
   console.log(data?.data?.rows, "here is data");
   const { Search } = Input;
 
@@ -28,6 +33,13 @@ const Users = () => {
 
   const onSearch = async (value) => {
     setKeyword(value);
+  };
+
+  const blockkublock = async (id, operation) => {
+    await axios.post(`http://localhost:8000/user/update/${id}`, {
+      status: operation,
+    });
+    refetch();
   };
 
   return (
@@ -51,7 +63,7 @@ const Users = () => {
           />
           <div>
             {data?.data?.rows.map((user, key) => (
-              <User key={key} user={user} />
+              <User key={key} user={user} blockkublock={blockkublock} />
             ))}
           </div>
         </>
