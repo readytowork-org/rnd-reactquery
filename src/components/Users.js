@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useQuery, QueryClient, QueryClientProvider } from "react-query";
+import { Pagination } from "antd";
 import User from "./User";
 const queryClient = new QueryClient();
 
@@ -17,6 +18,10 @@ const Users = () => {
   });
   console.log(data?.data?.rows, "here is data");
 
+  const onChange = (pageNumber) => {
+    setPage(pageNumber);
+  };
+
   return (
     <div>
       <h2>Users</h2>
@@ -24,19 +29,11 @@ const Users = () => {
       {status === "error" && <div>Error fetching</div>}
       {status === "success" && (
         <>
-          <button
-            onClick={() => setPage((old) => Math.max(old - 1, 1))}
-            disabled={page === 1}
-          >
-            Previous Page
-          </button>
-          <span>{page}</span>
-          <button
-            onClick={() => setPage((old) => (!data.data.rows ? old : old + 1))}
-            disabled={!data.data.rows || data?.data?.total_rows < page * 10}
-          >
-            Next page
-          </button>
+          <Pagination
+            defaultCurrent={page}
+            total={data?.data?.total_rows}
+            onChange={onChange}
+          />
           <div>
             {data?.data?.rows.map((user, key) => (
               <User key={key} user={user} />
