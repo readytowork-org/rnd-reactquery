@@ -14,6 +14,14 @@ h1 {
   font-size: 4em;
   letter-spacing: 2px;
 }
+h2 {
+  color: #ffff57;
+  font-size: 3em;
+  letter-spacing: 2px;
+}
+h4 {
+  color: #ffff57;
+}
 button {
   margin: 0 10px;
   background: transparent;

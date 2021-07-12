@@ -11,7 +11,7 @@ function App() {
     <>
       <div className="App">
         <h1>Star wars information</h1>
-        <Navbar setPage={setPage} />
+        <Navbar setPage={setPage} page={page} />
         <div className="content">
           {page === "planets" ? <Planets /> : null}
           {page === "people" ? <People /> : null}

@@ -1,5 +1,10 @@
 import React, { useState } from "react";
-import { useQuery, QueryClient, QueryClientProvider } from "react-query";
+import {
+  useQuery,
+  QueryClient,
+  QueryClientProvider,
+  useMutation,
+} from "react-query";
 import { Pagination, Input } from "antd";
 import User from "./User";
 import axios from "axios";
@@ -24,6 +29,18 @@ const Users = () => {
       refetchOnWindowFocus: false,
     }
   );
+
+  const blockkublock = async (id, operation) => {
+    await axios.post(`http://localhost:8000/user/update/${id}`, {
+      status: operation,
+    });
+    refetch();
+  };
+
+  const { status: mutationStatus } = useMutation(blockkublock, {
+    onSuccess: () => queryClient.invalidateQueries("users"),
+  });
+
   console.log(data?.data?.rows, "here is data");
   const { Search } = Input;
 
@@ -35,16 +52,9 @@ const Users = () => {
     setKeyword(value);
   };
 
-  const blockkublock = async (id, operation) => {
-    await axios.post(`http://localhost:8000/user/update/${id}`, {
-      status: operation,
-    });
-    refetch();
-  };
-
   return (
     <div>
-      <h2>Users</h2>
+      <h2>Users ({data?.data?.total_rows})</h2>
       {status === "loading" && <div>Loading data</div>}
       {status === "error" && <div>Error fetching</div>}
       {status === "success" && (
@@ -63,7 +73,13 @@ const Users = () => {
           />
           <div>
             {data?.data?.rows.map((user, key) => (
-              <User key={key} user={user} blockkublock={blockkublock} />
+              <User
+                key={key}
+                user={user}
+                blockkublock={blockkublock}
+                mutationStatus={mutationStatus}
+                // onSubmitBlock={onSubmitBlock}
+              />
             ))}
           </div>
         </>
